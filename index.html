@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Burger Rain Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #gameArea {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #player {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ff6b6b"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="white">🤚</text></svg>');
+            background-size: contain;
+            z-index: 100;
+        }
+
+        .burger {
+            position: absolute;
+            font-size: 40px;
+            z-index: 50;
+        }
+
+        .bomb {
+            position: absolute;
+            font-size: 40px;
+            z-index: 50;
+        }
+
+        #score {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 200;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #difficultyLevel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 200;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .rewards {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 200;
+        }
+
+        .reward-item {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #detailsButton {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .score-record {
+            background: #3d3d3d;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .close-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #gameOverModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-over-content {
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .play-again-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameArea">
+        <div id="player"></div>
+        <div id="score">Puntos: 0</div>
+        <div id="difficultyLevel">Nivel: 1</div>
+    </div>
+
+    <button id="detailsButton">Detalles 📋</button>
+
+    <div class="rewards">
+        <div class="reward-item">
+            <div>🥤 1000pts</div>
+            <div>Refresco</div>
+        </div>
+        <div class="reward-item">
+            <div>🍟 2000pts</div>
+            <div>Papas</div>
+        </div>
+        <div class="reward-item">
+            <div>💰 2500pts</div>
+            <div>10% Desc.</div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <h2>Historial de Juego</h2>
+            <div id="scoreRecords"></div>
+            <button class="close-btn" onclick="closeDetailsModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="gameOverModal">
+        <div class="game-over-content">
+            <h2>¡Juego Terminado!</h2>
+            <p>Puntaje Final: <span id="finalScore">0</span></p>
+            <div id="rewards"></div>
+            <button class="play-again-btn" onclick="startNewGame()">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let level = 1;
+        let gameActive = true;
+        let playerPos = { x: window.innerWidth / 2, y: window.innerHeight - 80 };
+        let items = [];
+        let lastSpawn = 0;
+        let spawnInterval = 1000;
+        let scoreRecords = JSON.parse(localStorage.getItem('scoreRecords')) || [];
+
+        const player = document.getElementById('player');
+        const gameArea = document.getElementById('gameArea');
+
+        function updatePlayerPosition(x) {
+            x = Math.max(30, Math.min(x, window.innerWidth - 30));
+            playerPos.x = x;
+            player.style.left = (x - 30) + 'px';
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            updatePlayerPosition(touch.clientX);
+        }
+
+        function handleMouse(e) {
+            if (e.buttons === 1) {
+                updatePlayerPosition(e.clientX);
+            }
+        }
+
+        gameArea.addEventListener('touchmove', handleTouch, { passive: false });
+        gameArea.addEventListener('touchstart', handleTouch, { passive: false });
+        gameArea.addEventListener('mousemove', handleMouse);
+
+        function spawnItem() {
+            if (!gameActive) return;
+
+            const now = Date.now();
+            if (now - lastSpawn < spawnInterval) return;
+            lastSpawn = now;
+
+            const isBomb = Math.random() < 0.2;
+            const item = document.createElement('div');
+            item.className = isBomb ? 'bomb' : 'burger';
+            item.textContent = isBomb ? '💣' : '🍔';
+            item.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            item.style.top = '-50px';
+            gameArea.appendChild(item);
+
+            const speed = 2 + Math.floor(score / 300);
+            items.push({
+                element: item,
+                x: parseFloat(item.style.left),
+                y: -50,
+                speed: speed,
+                isBomb
+            });
+        }
+
+        function updateGame() {
+            if (!gameActive) return;
+
+            spawnItem();
+
+            const playerBounds = {
+                left: playerPos.x - 30,
+                right: playerPos.x + 30,
+                top: playerPos.y - 30,
+                bottom: playerPos.y + 30
+            };
+
+            items = items.filter(item => {
+                item.y += item.speed;
+                item.element.style.top = item.y + 'px';
+
+                const itemBounds = {
+                    left: item.x,
+                    right: item.x + 40,
+                    top: item.y,
+                    bottom: item.y + 40
+                };
+
+                if (checkCollision(playerBounds, itemBounds)) {
+                    gameArea.removeChild(item.element);
+                    if (item.isBomb) {
+                        gameOver();
+                    } else {
+                        score += 10;
+                        updateScore();
+                        updateDifficulty();
+                    }
+                    return false;
+                }
+
+                if (item.y > window.innerHeight) {
+                    gameArea.removeChild(item.element);
+                    if (!item.isBomb) {
+                        gameOver();
+                    }
+                    return false;
+                }
+
+                return true;
+            });
+
+            requestAnimationFrame(updateGame);
+        }
+
+        function checkCollision(rect1, rect2) {
+            return rect1.left < rect2.right &&
+                   rect1.right > rect2.left &&
+                   rect1.top < rect2.bottom &&
+                   rect1.bottom > rect2.top;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Puntos: ${score}`;
+        }
+
+        function updateDifficulty() {
+            const newLevel = Math.floor(score / 300) + 1;
+            if (newLevel !== level) {
+                level = newLevel;
+                document.getElementById('difficultyLevel').textContent = `Nivel: ${level}`;
+                spawnInterval = Math.max(300, 1000 - (level * 100));
+                document.getElementById('difficultyLevel').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('difficultyLevel').classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        function gameOver() {
+            gameActive = false;
+            const record = {
+                score: score,
+                date: new Date().toLocaleString(),
+                level: level
+            };
+            scoreRecords.unshift(record);
+            if (scoreRecords.length > 10) scoreRecords.pop();
+            localStorage.setItem('scoreRecords', JSON.stringify(scoreRecords));
+
+            document.getElementById('finalScore').textContent = score;
+            const rewards = document.getElementById('rewards');
+            rewards.innerHTML = '';
+            if (score >= 2500) rewards.innerHTML += '<p>¡Ganaste 10% de Descuento! 🎉</p>';
+            if (score >= 2000) rewards.innerHTML += '<p>¡Ganaste Papas Gratis! 🍟</p>';
+            if (score >= 1000) rewards.innerHTML += '<p>¡Ganaste un Refresco! 🥤</p>';
+
+            document.getElementById('gameOverModal').style.display = 'flex';
+        }
+
+        function startNewGame() {
+            items.forEach(item => gameArea.removeChild(item.element));
+            items = [];
+            score = 0;
+            level = 1;
+            gameActive = true;
+            updateScore();
+            document.getElementById('difficultyLevel').textContent = 'Nivel: 1';
+            document.getElementById('gameOverModal').style.display = 'none';
+            spawnInterval = 1000;
+            requestAnimationFrame(updateGame);
+        }
+
+        document.getElementById('detailsButton').addEventListener('click', showDetails);
+
+        function showDetails() {
+            const records = document.getElementById('scoreRecords');
+            records.innerHTML = scoreRecords.map(record => `
+                <div class="score-record">
+                    <div>Fecha: ${record.date}</div>
+                    <div>Puntos: ${record.score}</div>
+                    <div>Nivel: ${record.level}</div>
+                </div>
+            `).join('');
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Iniciar juego
+        startNewGame();
+    </script>
+</body>
+</html>
