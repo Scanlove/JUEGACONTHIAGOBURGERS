@@ -72,16 +72,17 @@ body {
 
 .rewards {
     position: fixed;
-    bottom: 20px;
+    top: 60px; /* Ajusta esta distancia para colocarla debajo del puntaje */
     left: 20px;
     right: 20px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.5); /* Fondo transparente */
     padding: 15px;
     border-radius: 10px;
     display: flex;
     justify-content: space-around;
-    z-index: 200;
+    z-index: 150; /* Asegúrate de que esté debajo de los puntos y nivel */
 }
+
 
 .reward-item {
     text-align: center;
