@@ -95,8 +95,8 @@ body {
 
 #detailsButton {
     position: fixed;
-    top: 20px; /* Posición superior */
-    left: 50%; /* Centrado horizontal */
+    top: 150px; /* Posición superior */
+    left: 10%; /* Centrado horizontal */
     transform: translateX(-50%); /* Centra el botón en el eje X */
     background: #ff6b6b; /* Color de fondo */
     color: white;
