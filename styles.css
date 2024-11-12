@@ -5,6 +5,32 @@
     user-select: none;
     touch-action: none;
 }
+#startScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+}
+
+#startButton {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#startButton:hover {
+    background: #ff4a4a;
+}
 
 body {
     background: #1a1a1a;
