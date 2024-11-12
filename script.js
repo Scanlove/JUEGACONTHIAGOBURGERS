@@ -9,6 +9,8 @@ let scoreRecords = JSON.parse(localStorage.getItem('scoreRecords')) || [];
 
 const player = document.getElementById('player');
 const gameArea = document.getElementById('gameArea');
+const gameMusic = document.getElementById('gameMusic');
+
 
 function updatePlayerPosition(x) {
     x = Math.max(30, Math.min(x, window.innerWidth - 30));
@@ -132,6 +134,8 @@ function updateDifficulty() {
 
 function gameOver() {
     gameActive = false;
+    gameMusic.pause(); // Detiene la música
+    gameMusic.currentTime = 0; // Reinicia la música al principio para el próximo juego
     const record = {
         score: score,
         date: new Date().toLocaleString(),
@@ -151,6 +155,7 @@ function gameOver() {
     document.getElementById('gameOverModal').style.display = 'flex';
 }
 
+
 function startNewGame() {
     items.forEach(item => gameArea.removeChild(item.element));
     items = [];
@@ -161,8 +166,10 @@ function startNewGame() {
     document.getElementById('difficultyLevel').textContent = 'Nivel: 1';
     document.getElementById('gameOverModal').style.display = 'none';
     spawnInterval = 1000;
+    gameMusic.play(); // Inicia la música
     requestAnimationFrame(updateGame);
 }
+
 
 document.getElementById('detailsButton').addEventListener('click', showDetails);
 
