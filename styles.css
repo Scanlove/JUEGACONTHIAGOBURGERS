@@ -25,13 +25,14 @@ body {
     width: 60px;
     height: 60px;
     position: absolute;
-    bottom: 20px;
+    bottom: 80px; /* Cambia este valor para elevar el plato */
     left: 50%;
     transform: translateX(-50%);
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ff6b6b"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="white">🍽</text></svg>');
     background-size: contain;
     z-index: 100;
 }
+
 
 .burger, .bomb {
     position: absolute;
