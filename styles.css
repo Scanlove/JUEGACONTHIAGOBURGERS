@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    touch-action: none;
+}
+
+body {
+    background: #1a1a1a;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#gameArea {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+#player {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ff6b6b"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="white">🍽</text></svg>');
+    background-size: contain;
+    z-index: 100;
+}
+
+.burger, .bomb {
+    position: absolute;
+    font-size: 40px;
+    z-index: 50;
+}
+
+#score, #difficultyLevel {
+    position: fixed;
+    top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 200;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#score {
+    left: 20px;
+}
+
+#difficultyLevel {
+    right: 20px;
+}
+
+#title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.3);
+    z-index: 300;
+    pointer-events: none;
+}
+
+.rewards {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.7);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 200;
+}
+
+.reward-item {
+    text-align: center;
+    font-size: 14px;
+}
+
+#detailsButton {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 200;
+}
+
+.modal, #gameOverModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-content, .game-over-content {
+    background: #2d2d2d;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.close-btn, .play-again-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.play-again-btn {
+    background: #4caf50;
+    font-size: 18px;
+    padding: 15px 30px;
+    margin-top: 20px;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
