@@ -10,6 +10,15 @@ let scoreRecords = JSON.parse(localStorage.getItem('scoreRecords')) || [];
 const player = document.getElementById('player');
 const gameArea = document.getElementById('gameArea');
 const gameMusic = document.getElementById('gameMusic');
+const startScreen = document.getElementById('startScreen');
+const startButton = document.getElementById('startButton');
+
+
+startButton.addEventListener('click', () => {
+    startScreen.style.display = 'none'; // Oculta la pantalla de inicio
+    startNewGame(); // Inicia el juego
+});
+
 
 
 function updatePlayerPosition(x) {
@@ -190,4 +199,4 @@ function closeDetailsModal() {
 }
 
 // Iniciar juego
-startNewGame();
+// startNewGame(); 
