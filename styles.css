@@ -95,22 +95,20 @@ body {
 
 #detailsButton {
     position: fixed;
-    bottom: 90px;
-    right: 20px;
-    background: none; /* Elimina el fondo */
+    top: 20px; /* Posición superior */
+    left: 50%; /* Centrado horizontal */
+    transform: translateX(-50%); /* Centra el botón en el eje X */
+    background: #ff6b6b; /* Color de fondo */
     color: white;
-    border: none; /* Elimina el borde */
+    border: none;
     padding: 10px 20px;
     border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
     z-index: 200;
-    opacity: 0.7; /* Ajusta la transparencia */
+    opacity: 1; /* Elimina la transparencia */
 }
 
-#detailsButton:hover {
-    opacity: 1; /* Aumenta la visibilidad al pasar el mouse */
-}
 
 .modal, #gameOverModal {
     display: none;
