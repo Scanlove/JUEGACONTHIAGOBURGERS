@@ -63,12 +63,15 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 28px;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.3);
     z-index: 300;
     pointer-events: none;
 }
+
+#title img {
+    width: 200px; /* Ajusta el tamaño de la imagen según sea necesario */
+    opacity: 0.5; /* Ajusta el valor de transparencia (0.0 a 1.0) */
+}
+
 
 .rewards {
     position: fixed;
