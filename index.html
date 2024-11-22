@@ -3,60 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Burger Rain Challenge</title>
+    <title>BuscaThiagoBurger</title>
     <link rel="stylesheet" href="styles.css">
-    <audio id="gameMusic" src="juego.mp3" loop></audio>
-
 </head>
-    
 <body>
-    <div id="gameArea">
-        <div id="player"></div>
-        <div id="score">Puntos: 0</div>
-        <div id="difficultyLevel">Nivel: 1</div>
-        <div id="title">
-    <img src="foto1.png" alt="ThiagoBurger">
-</div>
-
-    </div>
-
-    <button id="detailsButton">Historial📋</button>
-
-    <div class="rewards">
-        <div class="reward-item">
-            <div>🥤 1000pts</div>
-            <div>Refresco</div>
-        </div>
-        <div class="reward-item">
-            <div>🍟 2000pts</div>
-            <div>Papas</div>
-        </div>
-        <div class="reward-item">
-            <div>💰 2500pts</div>
-            <div>10% Desc.</div>
+    <div id="start-screen">
+        <div class="start-container">
+            <h1>BuscaThiagoBurger</h1>
+            <img src="foto1.png" alt="Logo" class="start-logo">
+            
+            <div id="game-rules">
+                <h2>Reglas del Juego</h2>
+                <p>🍔 Objetivo: Encuentra los premios sin tocar las bombas</p>
+                <ul>
+                    <li>3 Vasos = 1 Vaso Gratis</li>
+                    <li>3 Papas = 1 Porción de Papas</li>
+                    <li>3 Hamburguesas = 1 Plato Sorpresa</li>
+                    <li>¡Cuidado con las BOMBAS! Un toque y pierdes</li>
+                </ul>
+            </div>
+            
+            <button id="start-button">Jugar con ThiagoBURGER</button>
         </div>
     </div>
 
-    <div id="detailsModal" class="modal">
-        <div class="modal-content">
-            <h2>Historial de Juego</h2>
-            <div id="scoreRecords"></div>
-            <button class="close-btn" onclick="closeDetailsModal()">Cerrar</button>
+    <div id="game-screen" class="hidden">
+        <h1>BuscaThiagoBurger</h1>
+        <div id="logo-container">
+            <img src="Logo.png" alt="Logo" id="game-logo">
+        </div>
+        <div id="game-board"></div>
+        <div id="score-container">
+            <p>Vasos: <span id="vaso-score">0</span></p>
+            <p>Papas: <span id="papas-score">0</span></p>
+            <p>Hamburguesas: <span id="burger-score">0</span></p>
+        </div>
+        <div id="message-container"></div>
+    </div>
+
+    <div id="game-over-screen" class="hidden">
+        <div class="game-over-container">
+            <h1>¡GAME OVER!</h1>
+            <p>💥 ¡Tocaste una bomba! 💥</p>
+            <button id="restart-button">Intentar de Nuevo</button>
         </div>
     </div>
 
-    <div id="gameOverModal">
-        <div class="game-over-content">
-            <h2>¡Juego Terminado!</h2>
-            <p>Puntaje Final: <span id="finalScore">0</span></p>
-            <div id="rewards"></div>
-            <button class="play-again-btn" onclick="startNewGame()">Jugar de Nuevo</button>
-        </div>
-    </div>
-    
-<div id="startScreen">
-    <button id="startButton">JUGAR CON THIAGO BURGER</button>
-</div>
+    <audio id="game-music" loop>
+        <source src="juego.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="bomb-sound">
+        <source src="juego.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="prize-sound">
+        <source src="juego.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="script.js"></script>
 </body>
