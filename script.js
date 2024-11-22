@@ -1,105 +1,143 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Comic Sans MS', cursive;
-    background-color: #FF6B6B;
-    height: 100%;
-    overflow: hidden;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const startButton = document.getElementById('start-button');
+    const restartButton = document.getElementById('restart-button');
+    const gameBoard = document.getElementById('game-board');
+    const messageContainer = document.getElementById('message-container');
+    const vasoScore = document.getElementById('vaso-score');
+    const papasScore = document.getElementById('papas-score');
+    const burgerScore = document.getElementById('burger-score');
+    const gameMusic = document.getElementById('game-music');
+    const bombSound = document.getElementById('bomb-sound');
+    const prizeSound = document.getElementById('prize-sound');
 
-#start-screen, #game-screen, #game-over-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-}
+    let vasos = 0;
+    let papas = 0;
+    let burgers = 0;
 
-.start-container, .game-over-container {
-    background-color: #FFD93D;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-    max-width: 90%;
-    width: 350px;
-}
+    const boardSize = 25;
+    const prizes = [
+        {name: 'vaso', count: 3, reward: 'Un vaso gratis'},
+        {name: 'papas', count: 3, reward: 'Una porción de papas'},
+        {name: 'burger', count: 3, reward: 'Un plato sorpresa'}
+    ];
 
-.start-logo, #game-logo {
-    max-width: 200px;
-    margin: 20px 0;
-    animation: pulse 2s infinite;
-}
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', resetGame);
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
+    function startGame() {
+        startScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+        gameMusic.play().catch(error => console.log('Music autoplay prevented'));
+        createBoard();
+    }
 
-#game-rules ul {
-    list-style-type: none;
-    padding: 0;
-    text-align: center;
-}
+    function resetGame() {
+        gameOverScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        vasos = 0;
+        papas = 0;
+        burgers = 0;
+        vasoScore.textContent = '0';
+        papasScore.textContent = '0';
+        burgerScore.textContent = '0';
+        messageContainer.textContent = '';
+    }
 
-#start-button, #restart-button {
-    background-color: #6BCB77;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
+    function createBoard() {
+        gameBoard.innerHTML = '';
+        const items = generateItems();
+        
+        items.forEach((item, index) => {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.type = item;
+            
+            cell.addEventListener('click', () => revealCell(cell, item));
+            
+            gameBoard.appendChild(cell);
+        });
+    }
 
-#start-button:active, #restart-button:active {
-    transform: scale(0.95);
-}
+    function generateItems() {
+        const items = new Array(boardSize).fill('empty');
+        const bombCount = 5;
+        
+        // Add bombs
+        for (let i = 0; i < bombCount; i++) {
+            const randomIndex = Math.floor(Math.random() * boardSize);
+            if (items[randomIndex] === 'empty') {
+                items[randomIndex] = 'bomb';
+            }
+        }
+        
+        // Add prizes
+        prizes.forEach(prize => {
+            for (let i = 0; i < prize.count; i++) {
+                const randomIndex = Math.floor(Math.random() * boardSize);
+                if (items[randomIndex] === 'empty') {
+                    items[randomIndex] = prize.name;
+                }
+            }
+        });
+        
+        return items;
+    }
 
-#game-board {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin: 20px 0;
-}
+    function revealCell(cell, type) {
+        if (cell.classList.contains('revealed')) return;
+        
+        cell.classList.add('revealed');
+        
+        if (type === 'bomb') {
+            cell.classList.add('bomb');
+            cell.textContent = '💥';
+            bombSound.play();
+            gameMusic.pause();
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            return;
+        }
+        
+        cell.textContent = type;
+        
+        switch(type) {
+            case 'vaso':
+                vasos++;
+                vasoScore.textContent = vasos;
+                checkPrize('vaso');
+                prizeSound.play();
+                break;
+            case 'papas':
+                papas++;
+                papasScore.textContent = papas;
+                checkPrize('papas');
+                prizeSound.play();
+                break;
+            case 'burger':
+                burgers++;
+                burgerScore.textContent = burgers;
+                checkPrize('burger');
+                prizeSound.play();
+                break;
+        }
+    }
 
-.cell {
-    background-color: #4ECDC4;
-    height: 70px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.cell:active {
-    transform: scale(0.95);
-}
-
-.cell.revealed {
-    background-color: #45B7D1;
-}
-
-.cell.bomb {
-    background-color: #FF6B6B;
-}
-
-.hidden {
-    display: none !important;
-}
-
-#score-container {
-    display: flex;
-    justify-content: space-around;
-    color: white;
-    font-weight: bold;
-}
-
-#message-container {
-    color: white;
-    font-size: 18px;
-    margin-top: 10px;
-}
+    function checkPrize(type) {
+        const prize = prizes.find(p => p.name === type);
+        if (prize) {
+            const count = type === 'vaso' ? vasos : 
+                          type === 'papas' ? papas : 
+                          burgers;
+            
+            if (count === prize.count) {
+                messageContainer.textContent = `¡Ganaste ${prize.reward}!`;
+                setTimeout(() => {
+                    messageContainer.textContent = '';
+                }, 3000);
+            }
+        }
+    }
+});
