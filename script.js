@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (['vaso', 'burger', 'papas'].includes(item.action)) {
             score[item.action]++;
+            document.getElementById(`${item.action}-score`).textContent = score[item.action];
             checkPrizes(item.action);
         }
     }
@@ -72,12 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function gameOver() {
-        alert('¡Boom! Juego Terminado');
+        alert('💥 ¡Boom! Juego Terminado 💥');
         resetGame();
     }
 
     function resetGame() {
         score = { vaso: 0, burger: 0, papas: 0 };
+        document.getElementById('vaso-score').textContent = '0';
+        document.getElementById('burger-score').textContent = '0';
+        document.getElementById('papas-score').textContent = '0';
         createBoard();
     }
 
