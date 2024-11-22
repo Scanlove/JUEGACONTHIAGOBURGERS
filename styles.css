@@ -1,185 +1,105 @@
-* {
+body, html {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    user-select: none;
-    touch-action: none;
+    font-family: 'Comic Sans MS', cursive;
+    background-color: #FF6B6B;
+    height: 100%;
+    overflow: hidden;
 }
-#startScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+
+#start-screen, #game-screen, #game-over-screen {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
+    height: 100vh;
+    text-align: center;
 }
 
-#startButton {
-    background: #ff6b6b;
+.start-container, .game-over-container {
+    background-color: #FFD93D;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    max-width: 90%;
+    width: 350px;
+}
+
+.start-logo, #game-logo {
+    max-width: 200px;
+    margin: 20px 0;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+#game-rules ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+#start-button, #restart-button {
+    background-color: #6BCB77;
     color: white;
     border: none;
-    padding: 20px 40px;
+    padding: 15px 30px;
+    font-size: 18px;
     border-radius: 10px;
-    font-size: 24px;
     cursor: pointer;
+    transition: transform 0.2s;
 }
 
-#startButton:hover {
-    background: #ff4a4a;
+#start-button:active, #restart-button:active {
+    transform: scale(0.95);
 }
 
-body {
-    background: #1a1a1a;
-    color: white;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-    touch-action: none;
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px 0;
 }
 
-#gameArea {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-}
-
-#player {
-    width: 60px;
-    height: 60px;
-    position: absolute;
-    bottom: 80px; /* Cambia este valor para elevar el plato */
-    left: 50%;
-    transform: translateX(-50%);
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ff6b6b"/><text x="50" y="70" font-size="60" text-anchor="middle" fill="white">🍽</text></svg>');
-    background-size: contain;
-    z-index: 100;
-}
-
-
-.burger, .bomb {
-    position: absolute;
-    font-size: 40px;
-    z-index: 50;
-}
-
-#score, #difficultyLevel {
-    position: fixed;
-    top: 20px;
-    font-size: 24px;
-    font-weight: bold;
-    z-index: 200;
-    background: rgba(0,0,0,0.5);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-#score {
-    left: 20px;
-}
-
-#difficultyLevel {
-    right: 20px;
-}
-
-#title {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 300;
-    pointer-events: none;
-}
-
-#title img {
-    width: 200px; /* Ajusta el tamaño de la imagen según sea necesario */
-    opacity: 0.5; /* Ajusta el valor de transparencia (0.0 a 1.0) */
-}
-
-
-.rewards {
-    position: fixed;
-    top: 60px; /* Ajusta esta distancia para colocarla debajo del puntaje */
-    left: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.5); /* Fondo transparente */
-    padding: 15px;
+.cell {
+    background-color: #4ECDC4;
+    height: 70px;
     border-radius: 10px;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.cell:active {
+    transform: scale(0.95);
+}
+
+.cell.revealed {
+    background-color: #45B7D1;
+}
+
+.cell.bomb {
+    background-color: #FF6B6B;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#score-container {
+    display: flex;
     justify-content: space-around;
-    z-index: 150; /* Asegúrate de que esté debajo de los puntos y nivel */
-}
-
-
-.reward-item {
-    text-align: center;
-    font-size: 14px;
-}
-
-#detailsButton {
-    position: fixed;
-    top: 150px; /* Posición superior */
-    left: 10%; /* Centrado horizontal */
-    transform: translateX(-50%); /* Centra el botón en el eje X */
-    background: #ff6b6b; /* Color de fondo */
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 200;
-    opacity: 1; /* Elimina la transparencia */
+    font-weight: bold;
 }
 
-
-.modal, #gameOverModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.9);
-    z-index: 1000;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.modal-content, .game-over-content {
-    background: #2d2d2d;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 600px;
-    margin: 20px auto;
-    text-align: center;
-}
-
-.close-btn, .play-again-btn {
-    background: #ff6b6b;
+#message-container {
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.play-again-btn {
-    background: #4caf50;
     font-size: 18px;
-    padding: 15px 30px;
-    margin-top: 20px;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-.shake {
-    animation: shake 0.5s;
+    margin-top: 10px;
 }
