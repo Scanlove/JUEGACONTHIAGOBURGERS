@@ -1,202 +1,105 @@
-let score = 0;
-let level = 1;
-let gameActive = true;
-let playerPos = { x: window.innerWidth / 2, y: window.innerHeight - 80 };
-let items = [];
-let lastSpawn = 0;
-let spawnInterval = 1000;
-let scoreRecords = JSON.parse(localStorage.getItem('scoreRecords')) || [];
-
-const player = document.getElementById('player');
-const gameArea = document.getElementById('gameArea');
-const gameMusic = document.getElementById('gameMusic');
-const startScreen = document.getElementById('startScreen');
-const startButton = document.getElementById('startButton');
-
-
-startButton.addEventListener('click', () => {
-    startScreen.style.display = 'none'; // Oculta la pantalla de inicio
-    startNewGame(); // Inicia el juego
-});
-
-
-
-function updatePlayerPosition(x) {
-    x = Math.max(30, Math.min(x, window.innerWidth - 30));
-    playerPos.x = x;
-    player.style.left = (x - 30) + 'px';
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', cursive;
+    background-color: #FF6B6B;
+    height: 100%;
+    overflow: hidden;
 }
 
-function handleTouch(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    updatePlayerPosition(touch.clientX);
+#start-screen, #game-screen, #game-over-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
 }
 
-function handleMouse(e) {
-    if (e.buttons === 1) {
-        updatePlayerPosition(e.clientX);
-    }
+.start-container, .game-over-container {
+    background-color: #FFD93D;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    max-width: 90%;
+    width: 350px;
 }
 
-gameArea.addEventListener('touchmove', handleTouch, { passive: false });
-gameArea.addEventListener('touchstart', handleTouch, { passive: false });
-gameArea.addEventListener('mousemove', handleMouse);
-
-function spawnItem() {
-    if (!gameActive) return;
-
-    const now = Date.now();
-    if (now - lastSpawn < spawnInterval) return;
-    lastSpawn = now;
-
-    const isBomb = Math.random() < 0.2;
-    const item = document.createElement('div');
-    item.className = isBomb ? 'bomb' : 'burger';
-    item.textContent = isBomb ? '💣' : '🍔';
-    item.style.left = Math.random() * (window.innerWidth - 40) + 'px';
-    item.style.top = '-50px';
-    gameArea.appendChild(item);
-
-    const speed = 2 + Math.floor(score / 300);
-    items.push({
-        element: item,
-        x: parseFloat(item.style.left),
-        y: -50,
-        speed: speed,
-        isBomb
-    });
+.start-logo, #game-logo {
+    max-width: 200px;
+    margin: 20px 0;
+    animation: pulse 2s infinite;
 }
 
-function updateGame() {
-    if (!gameActive) return;
-
-    spawnItem();
-
-    const playerBounds = {
-        left: playerPos.x - 30,
-        right: playerPos.x + 30,
-        top: playerPos.y - 30,
-        bottom: playerPos.y + 30
-    };
-
-    items = items.filter(item => {
-        item.y += item.speed;
-        item.element.style.top = item.y + 'px';
-
-        const itemBounds = {
-            left: item.x,
-            right: item.x + 40,
-            top: item.y,
-            bottom: item.y + 40
-        };
-
-        if (checkCollision(playerBounds, itemBounds)) {
-            gameArea.removeChild(item.element);
-            if (item.isBomb) {
-                gameOver();
-            } else {
-                score += 10;
-                updateScore();
-                updateDifficulty();
-            }
-            return false;
-        }
-
-        if (item.y > window.innerHeight) {
-            gameArea.removeChild(item.element);
-            if (!item.isBomb) {
-                gameOver();
-            }
-            return false;
-        }
-
-        return true;
-    });
-
-    requestAnimationFrame(updateGame);
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-function checkCollision(rect1, rect2) {
-    return rect1.left < rect2.right &&
-           rect1.right > rect2.left &&
-           rect1.top < rect2.bottom &&
-           rect1.bottom > rect2.top;
+#game-rules ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
 }
 
-function updateScore() {
-    document.getElementById('score').textContent = `Puntos: ${score}`;
+#start-button, #restart-button {
+    background-color: #6BCB77;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-function updateDifficulty() {
-    const newLevel = Math.floor(score / 300) + 1;
-    if (newLevel !== level) {
-        level = newLevel;
-        document.getElementById('difficultyLevel').textContent = `Nivel: ${level}`;
-        spawnInterval = Math.max(300, 1000 - (level * 100));
-        document.getElementById('difficultyLevel').classList.add('shake');
-        setTimeout(() => {
-            document.getElementById('difficultyLevel').classList.remove('shake');
-        }, 500);
-    }
+#start-button:active, #restart-button:active {
+    transform: scale(0.95);
 }
 
-function gameOver() {
-    gameActive = false;
-    gameMusic.pause(); // Detiene la música
-    gameMusic.currentTime = 0; // Reinicia la música al principio para el próximo juego
-    const record = {
-        score: score,
-        date: new Date().toLocaleString(),
-        level: level
-    };
-    scoreRecords.unshift(record);
-    if (scoreRecords.length > 10) scoreRecords.pop();
-    localStorage.setItem('scoreRecords', JSON.stringify(scoreRecords));
-
-    document.getElementById('finalScore').textContent = score;
-    const rewards = document.getElementById('rewards');
-    rewards.innerHTML = '';
-    if (score >= 2500) rewards.innerHTML += '<p>¡Ganaste 10% de Descuento! 🎉</p>';
-    if (score >= 2000) rewards.innerHTML += '<p>¡Ganaste Papas Gratis! 🍟</p>';
-    if (score >= 1000) rewards.innerHTML += '<p>¡Ganaste un Refresco! 🥤</p>';
-
-    document.getElementById('gameOverModal').style.display = 'flex';
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px 0;
 }
 
-
-function startNewGame() {
-    items.forEach(item => gameArea.removeChild(item.element));
-    items = [];
-    score = 0;
-    level = 1;
-    gameActive = true;
-    updateScore();
-    document.getElementById('difficultyLevel').textContent = 'Nivel: 1';
-    document.getElementById('gameOverModal').style.display = 'none';
-    spawnInterval = 1000;
-    gameMusic.play(); // Inicia la música
-    requestAnimationFrame(updateGame);
+.cell {
+    background-color: #4ECDC4;
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-
-document.getElementById('detailsButton').addEventListener('click', showDetails);
-
-function showDetails() {
-    const records = document.getElementById('scoreRecords');
-    records.innerHTML = scoreRecords.map(record => `
-        <div class="score-record">
-            <div>Fecha: ${record.date}</div>
-            <div>Puntos: ${record.score}</div>
-            <div>Nivel: ${record.level}</div>
-        </div>
-    `).join('');
-    document.getElementById('detailsModal').style.display = 'block';
+.cell:active {
+    transform: scale(0.95);
 }
 
-function closeDetailsModal() {
-    document.getElementById('detailsModal').style.display = 'none';
+.cell.revealed {
+    background-color: #45B7D1;
 }
 
-// Iniciar juego
-// startNewGame(); 
+.cell.bomb {
+    background-color: #FF6B6B;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#score-container {
+    display: flex;
+    justify-content: space-around;
+    color: white;
+    font-weight: bold;
+}
+
+#message-container {
+    color: white;
+    font-size: 18px;
+    margin-top: 10px;
+}
