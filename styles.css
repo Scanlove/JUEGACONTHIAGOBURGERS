@@ -81,6 +81,8 @@ body, html {
 
 .cell.revealed {
     background-color: #45B7D1;
+    color: white;
+    font-size: 24px;
 }
 
 .cell.bomb {
